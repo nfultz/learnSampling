@@ -1,10 +1,13 @@
 Package: learnSampling
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Tools to help learn sampling
 Version: 0.1
-Date: 2015-10-09
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Date: 2015-10-05
+Author: David J. Stanley
+Maintainer: David J. Stanley <dstanley@uoguelph.ca>
+Description: A set of tools I use to teach graduate statistics.
+Depends: R (>= 3.1.2)
+License: Unlimited
 LazyData: TRUE
+Import:
+     stats
