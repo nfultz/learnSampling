@@ -1,7 +1,7 @@
 #' Calculate x,y data to create a specified correlation
 #' @param r Desired correlation
 #' @param n Sample size
-#' @return Matrix with sample data
+#' @return Data frame with sample data
 #' @examples
 #' my.data <- get_cor_data(r=.25, n=100)
 #' @export
@@ -57,7 +57,7 @@ get_cor_samples <- function(rho=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,n
           ns <- rep(n,number.of.samples)
      }
 
-     pop.N <- 1000000
+     pop.N <- 1000000 # Use a population with 1,000,000 people in it
      pop.data <- get_cor_data(r=rho,n=pop.N)
      names(pop.data) <- c("x","y")
      rs <- rep(NA,number.of.samples)
@@ -89,3 +89,64 @@ sort_samples_by_r <- function(df.in){
      rownames(df.in) <-NULL
      return(df.in)
 }
+
+
+#' Calculate a data frame where columns correlate as specified by a correlation matrix
+#' @param r.matrix Desired correlation matrix
+#' @param n Sample size
+#' @return Data frame with sample data
+#' @examples
+#' N <- 600
+#' M <- matrix(c(1.00, 0.60, 0.30, 0.30,
+#'             0.60, 1.00, 0.00, 0.60,
+#'             0.30, 0.00, 1.00, 0.00,
+#'             0.30, 0.60, 0.00, 1.00), nrow=4, ncol=4)
+#' my.data <- get_cor_data_from_matrix(M,N)
+#' library(apaTables)
+#' apa.cor.table(my.data)
+#' @export
+get_cor_data_from_matrix <- function(r.matrix,n) {
+     L <-  chol(r.matrix)
+     tL <-t(L)
+     nvars <- dim(L)[1]
+
+     x=scale(matrix(rnorm(n*nvars),n,nvars),center=T,scale=T)
+     svd.out <- svd(x)
+     u <- svd.out$u
+
+     matrix.out <- u %*% L
+     df.out <- data.frame(matrix.out)
+     return(df.out)
+}
+
+#' Change the mean and standard deviation of each column in a data frame to specified values
+#' @param cor.data Data frame
+#' @param means.in A vector of desired column means. The number means must correspond to the number of columns.
+#' @param sds.in A vector of desired column standard deviations. The number standard deviations must correspond to the number of columns.
+#' @return Data frame with the desired means and standard deviations for the columns
+#' @examples
+#' N <- 600
+#' M <- matrix(c(1.00, 0.60, 0.30, 0.30,
+#'             0.60, 1.00, 0.00, 0.60,
+#'             0.30, 0.00, 1.00, 0.00,
+#'             0.30, 0.60, 0.00, 1.00), nrow=4, ncol=4)
+#' my.data <- get_cor_data_from_matrix(M,N)
+#' desired.means <- c(3.5,4,4.5,5)
+#' desired.sds <- c(1.1,1.2,1.3,1.4)
+#' my.data <- cor_data_set_m_sd(my.data, desired.means,desired.sds)
+#' library(apaTables)
+#' apa.cor.table(my.data)
+#' @export
+cor_data_set_m_sd <- function(cor.data,means.in,sds.in) {
+     df.out <- cor.data
+     n.col <- ncol(df.out)
+
+     for (cur.col.num in 1:n.col) {
+          cur.col <- df.out[,cur.col.num]
+          cur.col <- as.numeric(scale(cur.col))
+          cur.col <- cur.col*sds.in[cur.col.num]+means.in[cur.col.num]
+          df.out[,cur.col.num]<-cur.col
+     }
+     return(round(df.out,2))
+}
+

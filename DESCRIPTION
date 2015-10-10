@@ -9,5 +9,8 @@ Description: A set of tools I use to teach graduate statistics.
 Depends: R (>= 3.1.2)
 License: Unlimited
 LazyData: TRUE
-Import:
-     stats
+Suggests:
+     apaTables
+Imports:
+     stats,
+     MBESS
