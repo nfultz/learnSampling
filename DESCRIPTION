@@ -12,5 +12,4 @@ LazyData: TRUE
 Suggests:
      apaTables
 Imports:
-     stats,
-     MBESS
+     stats
