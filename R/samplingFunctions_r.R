@@ -27,6 +27,7 @@ get_cor_data <- function(r, n) {
           vec.out[,2]=scale(e,center=T,scale=T)
      }
      df.out <- data.frame(vec.out)
+     names(df.out) <- c("x","y")
      return(df.out)
 }
 
