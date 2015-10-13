@@ -2,13 +2,15 @@
 % Please edit documentation in R/samplingFunctions_d.R
 \name{get_d_samples}
 \alias{get_d_samples}
-\title{Calculate a number of sample d-values (unbiased) based on a specified population correlation}
+\title{Calculate a number of sample d-values (unbiased) based on two populations}
 \usage{
-get_d_samples(pop.d = NA, n = NA, n.min = NA, n.max = NA,
-  number.of.samples = 10, number.of.decimals = 2)
+get_d_samples(pop1.data = NA, pop2.data = NA, n = NA, n.min = NA,
+  n.max = NA, number.of.samples = 10, number.of.decimals = 2)
 }
 \arguments{
-\item{pop.d}{Population d-value}
+\item{pop1.data}{A vector of values defining population 1}
+
+\item{pop2.data}{A vector of values defining population 2}
 
 \item{n}{Cell size for both cells for all samples. If you use n, do not use n.min or n.max.}
 
@@ -24,11 +26,11 @@ get_d_samples(pop.d = NA, n = NA, n.min = NA, n.max = NA,
 Data frame with sample d-values
 }
 \description{
-Calculate a number of sample d-values (unbiased) based on a specified population correlation
+Calculate a number of sample d-values (unbiased) based on two populations
 }
 \examples{
-get_d_samples(pop.d=.35,n=100)
-my.samples <- get_d_samples(pop.d=.35,n=100)
-my.samples <- get_d_samples(pop.d=.35,n.min=50,n.max=150,number.of.samples=15)
+pop.1 <- make_population(pop.mean=100, pop.sd=15)
+pop.2 <- make_population_offset_by_d(pop.data=pop.1,d=1.0)
+my.samples <- get_d_samples(pop1.data=pop.1,pop2.data=pop.2,n.min=50,n.max=150,number.of.samples=15)
 }
 

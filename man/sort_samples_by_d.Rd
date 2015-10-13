@@ -16,7 +16,9 @@ Data frame that has been sorted by column d
 Sort data frame based on column d
 }
 \examples{
-my.samples <- get_d_samples(pop.d=.8,n.min=50,n.max=150,number.of.samples=10)
+pop.1 <- make_population(pop.mean=100, pop.sd=15)
+pop.2 <- make_population_offset_by_d(pop.data=pop.1,d=1.0)
+my.samples <- get_d_samples(pop1.data=pop.1,pop2.data=pop.2,n.min=50,n.max=150,number.of.samples=15)
 my.samples.sorted <- sort_samples_by_d(my.samples)
 }
 

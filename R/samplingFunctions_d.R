@@ -1,4 +1,4 @@
-#' Calculate a number of sample d-values (unbiased) based on a specified population correlation
+#' Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.
 #' @param pop.d Population d-value
 #' @param n Cell size for both cells for all samples. If you use n, do not use n.min or n.max.
 #' @param n.min Minimum cell size across samples. Cell sizes will be equal in a single sample.
@@ -7,11 +7,11 @@
 #' @param number.of.decimals Number of decimals to report in returned data frame
 #' @return Data frame with sample d-values
 #' @examples
-#' get_d_samples(pop.d=.35,n=100)
-#' my.samples <- get_d_samples(pop.d=.35,n=100)
-#' my.samples <- get_d_samples(pop.d=.35,n.min=50,n.max=150,number.of.samples=15)
+#' get_d_samples_infinite(pop.d=.35,n=100)
+#' my.samples <- get_d_samples_infinite(pop.d=.35,n=100)
+#' my.samples <- get_d_samples_infinite(pop.d=.35,n.min=50,n.max=150,number.of.samples=15)
 #' @export
-get_d_samples <- function(pop.d=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,number.of.decimals=2) {
+get_d_samples_infinite <- function(pop.d=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,number.of.decimals=2) {
 
      if (is.na(pop.d)) {return()}
 
@@ -30,7 +30,9 @@ get_d_samples <- function(pop.d=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,n
           cur.n <- ns[i]
           group1.data <- rnorm(cur.n) + pop.d
           group2.data <- rnorm(cur.n)
-          cur.d <- MBESS::smd(Group.1=group1.data,Group.2=group2.data,Unbiased=TRUE)
+          #cur.d <- MBESS::smd(Group.1=group1.data,Group.2=group2.data,Unbiased=TRUE)
+          cur.d <- get.d(group1.data,group2.data)
+
           ds[i] <- round(cur.d, number.of.decimals)
      }
      n <- ns
@@ -47,7 +49,9 @@ get_d_samples <- function(pop.d=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,n
 #' @param df.in Data frame to sort
 #' @return Data frame that has been sorted by column d
 #' @examples
-#' my.samples <- get_d_samples(pop.d=.8,n.min=50,n.max=150,number.of.samples=10)
+#' pop.1 <- make_population(pop.mean=100, pop.sd=15)
+#' pop.2 <- make_population_offset_by_d(pop.data=pop.1,d=1.0)
+#' my.samples <- get_d_samples(pop1.data=pop.1,pop2.data=pop.2,n.min=50,n.max=150,number.of.samples=15)
 #' my.samples.sorted <- sort_samples_by_d(my.samples)
 #' @export
 sort_samples_by_d <- function(df.in){
@@ -93,8 +97,8 @@ make_population_offset_by_d <- function(pop.data,d) {
 
 
 #' Calculate a number of sample d-values (unbiased) based on two populations
-#' @param pop1 A vector of values defining population 1
-#' @param pop2 A vector of values defining population 2
+#' @param pop1.data A vector of values defining population 1
+#' @param pop2.data A vector of values defining population 2
 #' @param n Cell size for both cells for all samples. If you use n, do not use n.min or n.max.
 #' @param n.min Minimum cell size across samples. Cell sizes will be equal in a single sample.
 #' @param n.max Maximum cell size across samples. Cell sizes will be equal in a single sample.
@@ -104,9 +108,9 @@ make_population_offset_by_d <- function(pop.data,d) {
 #' @examples
 #' pop.1 <- make_population(pop.mean=100, pop.sd=15)
 #' pop.2 <- make_population_offset_by_d(pop.data=pop.1,d=1.0)
-#' my.samples <- get_d_samples_from_pops(pop1=pop.1,pop2=pop.2,n.min=50,n.max=150,number.of.samples=15)
+#' my.samples <- get_d_samples(pop1.data=pop.1,pop2.data=pop.2,n.min=50,n.max=150,number.of.samples=15)
 #' @export
-get_d_samples_from_pops <- function(pop1=NA,pop2=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,number.of.decimals=2) {
+get_d_samples <- function(pop1.data=NA,pop2.data=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,number.of.decimals=2) {
      n.type <- "none"
      if (is.na(n)) {
           if (is.na(n.min)| is.na(n.max)){return()}
@@ -117,16 +121,17 @@ get_d_samples_from_pops <- function(pop1=NA,pop2=NA,n=NA,n.min=NA,n.max=NA,numbe
           ns <- rep(n,number.of.samples)
      }
 
-     pop1.N <- length(pop1)
-     pop2.N <- length(pop2)
+     pop1.N <- length(pop1.data)
+     pop2.N <- length(pop2.data)
      ds <- rep(NA,number.of.samples)
      for (i in 1:number.of.samples) {
           cur.n <- ns[i]
           id1 <- sample.int(pop1.N,cur.n)
           id2 <- sample.int(pop2.N,cur.n)
-          group1.data <- pop1[id1]
-          group2.data <- pop2[id2]
-          cur.d <- MBESS::smd(Group.1=group1.data,Group.2=group2.data,Unbiased=TRUE)
+          group1.data <- pop1.data[id1]
+          group2.data <- pop2.data[id2]
+          #cur.d <- MBESS::smd(Group.1=group1.data,Group.2=group2.data,Unbiased=TRUE)
+          cur.d <- get.d(group1.data,group2.data)
           ds[i] <- round(cur.d, number.of.decimals)
      }
      n <- ns
@@ -136,4 +141,16 @@ get_d_samples_from_pops <- function(pop1=NA,pop2=NA,n=NA,n.min=NA,n.max=NA,numbe
      data.out <- data.frame(study.number,n,d)
      rownames(data.out) <- NULL
      return(data.out)
+}
+
+get.d <- function(group1,group2) {
+     n1 <- length(group1)
+     n2 <- length(group2)
+     v1 <- var(group1)
+     v2 <- var(group2)
+     m1 <- mean(group1)
+     m2 <- mean(group2)
+
+     d <- abs(m1-m2)/sqrt((v1*(n1-1) + v2*(n2-2)) / (n1+n2-2))
+     return(d)
 }

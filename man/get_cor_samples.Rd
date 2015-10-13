@@ -4,11 +4,13 @@
 \alias{get_cor_samples}
 \title{Calculate a number of sample correlations based on a specified population correlation}
 \usage{
-get_cor_samples(rho = NA, n = NA, n.min = NA, n.max = NA,
-  number.of.samples = 10, number.of.decimals = 2)
+get_cor_samples(rho = NA, pop.data = NA, n = NA, n.min = NA,
+  n.max = NA, number.of.samples = 10, number.of.decimals = 2)
 }
 \arguments{
-\item{rho}{Population correlation}
+\item{rho}{Population correlation. Do not use pop.data is you provide this value.}
+
+\item{pop.data}{Population-level data frame for correlation. Do no use rho arguement if you provide this data.}
 
 \item{n}{Sample size for all samples If you use n, do not use n.min or n.max.}
 
