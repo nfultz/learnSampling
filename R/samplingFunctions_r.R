@@ -30,8 +30,19 @@ get_cor_data <- function(r, n) {
      return(df.out)
 }
 
+
+
+
+
+
+
+
+
+
+
 #' Calculate a number of sample correlations based on a specified population correlation
-#' @param rho Population correlation
+#' @param rho Population correlation. Do not use pop.data is you provide this value.
+#' @param pop.data Population-level data. Do no use rho arguement if you provide this data.
 #' @param n Sample size for all samples If you use n, do not use n.min or n.max.
 #' @param n.min Minimum sample size
 #' @param n.max Maximum sample size
@@ -43,7 +54,7 @@ get_cor_data <- function(r, n) {
 #' my.samples <- get_cor_samples(rho=.35,n=100)
 #' my.samples <- get_cor_samples(rho=.35,n.min=50,n.max=150,number.of.samples=15)
 #' @export
-get_cor_samples <- function(rho=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,number.of.decimals=2) {
+get_cor_samples <- function(rho=NA,pop.data,n=NA,n.min=NA,n.max=NA,number.of.samples=10,number.of.decimals=2) {
 
      if (is.na(rho)) {return()}
 
@@ -58,7 +69,9 @@ get_cor_samples <- function(rho=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,n
      }
 
      pop.N <- 1000000 # Use a population with 1,000,000 people in it
-     pop.data <- get_cor_data(r=rho,n=pop.N)
+     if (is.na(pop.data)) {
+          pop.data <- get_cor_data(r=rho,n=pop.N)
+     }
      names(pop.data) <- c("x","y")
      rs <- rep(NA,number.of.samples)
      for (i in 1:number.of.samples) {
