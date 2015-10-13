@@ -57,8 +57,6 @@ get_cor_data <- function(r, n) {
 #' @export
 get_cor_samples <- function(rho=NA,pop.data=NA,n=NA,n.min=NA,n.max=NA,number.of.samples=10,number.of.decimals=2) {
 
-     if (is.na(rho)) {return()}
-
      n.type <- "none"
      if (is.na(n)) {
           if (is.na(n.min)| is.na(n.max)){return()}
@@ -70,9 +68,14 @@ get_cor_samples <- function(rho=NA,pop.data=NA,n=NA,n.min=NA,n.max=NA,number.of.
      }
 
      pop.N <- 1000000 # Use a population with 1,000,000 people in it
-     if (is.na(pop.data)) {
+     if (!is.na(rho)) {
           pop.data <- get_cor_data(r=rho,n=pop.N)
+     } else {
+          pop.N <- dim(pop.data)[1]
      }
+
+
+
      names(pop.data) <- c("x","y")
      rs <- rep(NA,number.of.samples)
      for (i in 1:number.of.samples) {
