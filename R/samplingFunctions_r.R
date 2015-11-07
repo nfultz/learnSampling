@@ -135,6 +135,11 @@ get_cor_data_from_matrix <- function(r.matrix,n) {
 
      matrix.out <- u %*% L
      df.out <- data.frame(matrix.out)
+
+     for (i in 1:nvars) {
+          df.out[,i] <-as.numeric(scale(df.out[,i]))
+     }
+
      return(df.out)
 }
 
