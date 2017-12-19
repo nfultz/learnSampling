@@ -6,28 +6,21 @@
 #' my.data <- get_cor_data(r=.25, n=100)
 #' @export
 get_cor_data <- function(r, n) {
-     x <- scale(matrix(rnorm(n*2),n,2),center=T,scale=T)
+     x <- scale(matrix(rnorm(n*2),n,2))
      svd.out <- svd(x)
      u <- svd.out$u
 
-     y=u[,1]
-     e=u[,2]
+     y <- u[,1]
+     e <- u[,2]
 
      if (round(r,3)!=0) {
           r2 <- r*r
-          e.weight<-sqrt((1-r2)/r2)
-          x = y + e.weight*e
-
-          vec.out=matrix(NA,nrow=n,ncol=2)
-          vec.out[,1]=scale(x,center=T,scale=T)
-          vec.out[,2]=scale(y,center=T,scale=T)
+          e.weight <- sqrt((1-r2)/r2)
+          x <- sign(r)*y + e.weight*e
      } else {
-          vec.out=matrix(NA,nrow=n,ncol=2)
-          vec.out[,1]=scale(y,center=T,scale=T)
-          vec.out[,2]=scale(e,center=T,scale=T)
+          x <- e
      }
-     df.out <- data.frame(vec.out)
-     names(df.out) <- c("x","y")
+     df.out <- data.frame(x = scale(x), y = scale(y))
      return(df.out)
 }
 
